@@ -1,0 +1,675 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+
+namespace Space
+{
+    enum EstadoJogo
+    {
+        PerdeuVida, Encerrado, EmAndamento, GerarFase, Sobre, Pausa
+    }
+    public class Game1 : Microsoft.Xna.Framework.Game
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+
+        #region Variaveis de controle do estado do jogo.
+        
+        private EstadoJogo estadojogo; 
+        private Sprite nave;
+        private Sprite vidas;
+        private Sprite telaAbertura;
+        private Sprite telaFundoSobre;
+        private SpriteFont fonte;
+        private SpriteFont fontescore;
+        private Sprite telaFundo;
+        private InformacoesFases geraInimigo;
+
+        #endregion
+
+
+        #region Declaração de objetos que podem aparecer simultaneamente na tela
+
+        private List<Sprite> inimigo = new List<Sprite>();
+        private List<Sprite> tiro = new List<Sprite>();
+        private List<Sprite> tiroInimigo = new List<Sprite>();
+
+        #endregion
+
+        #region Controles de tempo, pontuacao e velocidades
+
+        int inimigoVelocidade = 15;
+        public int pontos = 0;
+        private int quantidadeVidas = 3;
+        private bool este = true;
+        private int velocidadeInimigo = 0;
+        private const int tempoTiroInimigo = 1500;
+        private int ultimoTiroInimigo = 0;
+        private int ultimoTiro = 0;
+        private const int tempoTiro = 500;
+        private int tempoUltimaColisao = 0;
+        private const int tempoColisao = 1000;
+        private int pontosPorAcerto = 10;
+        private int maiorPontuacao;
+        private int tempoEnter = 0;
+        Score score;
+        #endregion
+
+        #region Controles de audio
+
+        Song somAbertura;
+        SoundEffect somEsplosaoInimigo;
+        SoundEffect somExplosaoNave;
+        SoundEffect somTiro;
+        SoundEffect somPressinaEnter;
+        private bool mudo = false;
+
+        #endregion
+
+        public Game1()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+        }
+
+        protected override void Initialize()
+        {
+            // Adicione instancia para iniciar todas as operações logicas.
+            graphics.PreferredBackBufferHeight = 700;
+            graphics.PreferredBackBufferWidth = 600;
+            graphics.ApplyChanges();
+
+            
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            // cria um novo SpriteBatch, que pode ser usado para desenhar imagens.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            #region Inicializar Sprtes
+
+            nave = new Sprite(Content.Load<Texture2D>(@"Imagens\nave1"),
+                new Vector2(450,650));
+
+
+            vidas = new Sprite(Content.Load<Texture2D>(@"Imagens\vida"), 
+                new Vector2(0, 0));
+
+            telaFundo = new Sprite(Content.Load<Texture2D>(@"Imagens\tela de fundo"),
+                new Vector2(0,0));
+
+            telaFundoSobre = new Sprite(Content.Load<Texture2D>(@"Imagens\Sobre"),
+                new Vector2(0, 0));
+
+            telaAbertura = new Sprite(Content.Load<Texture2D>(@"Imagens\Abertura"),
+                new Vector2(0, 0));
+            #endregion
+
+            #region Inicializar fontes
+            fonte = Content.Load<SpriteFont>(@"Fontes\SpriteFont1");
+
+            fontescore = Content.Load<SpriteFont>(@"Fontes\SpriteFont1");
+            #endregion
+
+            #region Inicializar arquivos de audio
+
+            somAbertura = Content.Load<Song>(@"Audio\TelaAbertura");
+            somPressinaEnter = Content.Load<SoundEffect>(@"Audio\Start");
+            somTiro = Content.Load<SoundEffect>(@"Audio\Tiro");
+            somEsplosaoInimigo = Content.Load<SoundEffect>(@"Audio\ExplosaoInimigo");
+            somExplosaoNave = Content.Load<SoundEffect>(@"Audio\ExplosaoNave");
+            #endregion
+
+            #region Inicializar classes de controle de fase e estado
+            geraInimigo = new InformacoesFases();
+
+            estadojogo = EstadoJogo.Encerrado;
+
+            
+            score = GravarScore.Carregar<Score>(@".\record.sav");
+            if (score == null) { maiorPontuacao = 0; }
+            if (score != null) { maiorPontuacao = score.recorde; }
+            #endregion
+
+        }
+
+
+        protected override void UnloadContent()
+        {
+            // TODO: Unload any non ContentManager content here
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                this.Exit();
+
+            KeyboardState interacaoTeclado = Keyboard.GetState();
+            if (interacaoTeclado.IsKeyDown(Keys.Escape)) { this.Exit(); }
+
+            tempoEnter += gameTime.ElapsedGameTime.Milliseconds;
+            if (tempoEnter > 200)
+            {
+                tempoEnter = 100;
+            }
+            #region Estados do jogo 
+
+            switch (estadojogo)
+            {
+                #region Estado de pause
+                case EstadoJogo.Pausa:
+
+                    if (interacaoTeclado.IsKeyDown(Keys.Enter) && tempoEnter > 100)
+                    {
+                        estadojogo = EstadoJogo.EmAndamento;
+                        tempoEnter = 0;
+                    }
+                    break;
+                #endregion
+
+                #region Estado de perdeu vida
+
+                case EstadoJogo.PerdeuVida:
+                    tempoUltimaColisao += gameTime.ElapsedGameTime.Milliseconds;
+                    if (tempoUltimaColisao > tempoColisao)
+                    {
+                        tempoUltimaColisao -= tempoColisao;
+                        estadojogo = EstadoJogo.GerarFase;
+                    }
+                    break;
+
+                #endregion
+
+                #region Estado de jogo encerrado
+
+                case EstadoJogo.Encerrado:
+                    if (MediaPlayer.State == MediaState.Stopped && !mudo)
+                    {
+                        MediaPlayer.Play(somAbertura);
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.Enter))
+                    {
+                        estadojogo = EstadoJogo.GerarFase;
+                        MediaPlayer.Stop();
+                        if (!mudo) { somPressinaEnter.Play(); }
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.S))
+                    {
+                        estadojogo = EstadoJogo.Sobre;
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.M) && !mudo)
+                    {
+                        mudo = true;
+                        MediaPlayer.Stop();
+                        break;
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.A) && mudo)
+                    {
+                        mudo = false;
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.D0))
+                    {
+                        maiorPontuacao = 0;
+                        score = null;
+                        score = new Score(0);
+                        GravarScore.Salvar<Score>(@".\record.sav", score);
+                    }
+                    break;
+                #endregion
+
+                #region Estado Sobre
+
+                case EstadoJogo.Sobre:
+
+                    if (MediaPlayer.State == MediaState.Stopped && !mudo)
+                    {
+                        MediaPlayer.Play(somAbertura);
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.V))
+                    {
+                        estadojogo = EstadoJogo.Encerrado;
+                    }
+
+                    break;
+                #endregion
+
+                #region Estado de jogo 
+                case EstadoJogo.EmAndamento:
+
+                    if (interacaoTeclado.IsKeyDown(Keys.Enter) && tempoEnter >100)
+                    {
+                        estadojogo = EstadoJogo.Pausa;
+                        tempoEnter = 0;
+                    }
+
+                    if (inimigo.Count == 0)
+                    {
+                        tiroInimigo.Clear();
+                        tiro.Clear();
+                        estadojogo = EstadoJogo.GerarFase;
+                    }
+
+                    #region Controle da nave
+                    if (interacaoTeclado.IsKeyDown(Keys.Left) 
+                        && (nave.posicao.X > 0)) { nave.posicao.X -= 5; }
+                    if (interacaoTeclado.IsKeyDown(Keys.Right)
+                        && (nave.posicao.X + nave.largura < 600)) { nave.posicao.X += 5; }
+                    #endregion
+
+                    #region Controle de tiros
+
+                    if (ultimoTiro < 501)
+                    {
+                        ultimoTiro += gameTime.ElapsedGameTime.Milliseconds;
+                    }
+                    if (interacaoTeclado.IsKeyDown(Keys.Space) &&
+                        ultimoTiro > tempoTiro)
+                    {
+                        ultimoTiro -= tempoTiro;
+                        tiro.Add(new Sprite(Content.Load<Texture2D>(@"Imagens\tiro"),
+                            new Vector2(nave.posicao.X + nave.largura / 2, nave.posicao.Y)));
+                        if (!mudo) { somTiro.Play(); }
+                    }
+                    foreach (Sprite s in new List<Sprite>(tiro))
+                    {
+                        s.posicao.Y -= 10;
+                        if (s.posicao.Y < -10)
+                            tiro.Remove(s);
+                    }
+                    #endregion
+
+                    #region Movimento dos inimigos
+
+                    velocidadeInimigo += gameTime.ElapsedGameTime.Milliseconds;
+
+                    if (velocidadeInimigo >= 650 && inimigo.Count > 20)
+                    {
+                        velocidadeInimigo -= velocidadeInimigo;
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+                            
+                            if ((s.posicao.X + s.largura / 2 >= 580
+                                || (s.posicao.X <= 30)) && este == true)
+                            {
+                                inimigoVelocidade *= -1;
+                                foreach (Sprite t in new List<Sprite>(inimigo))
+                                {
+                                    t.posicao.Y += 60;
+                                }
+                                este = false;
+                            }
+                        }
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+                            s.posicao.X += inimigoVelocidade;
+                            s.frameAtual++;
+                            if (s.frameAtual > 1) { s.frameAtual = 0; }
+                        }
+                        este = true;
+                    }
+
+                    if (velocidadeInimigo >= 300 && inimigo.Count < 21 && inimigo.Count > 15)
+                    {
+                        velocidadeInimigo -= velocidadeInimigo;
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+
+                            if ((s.posicao.X + s.largura / 2 >= 580
+                                || (s.posicao.X <= 30)) && este == true)
+                            {
+                                inimigoVelocidade *= -1;
+                                foreach (Sprite t in new List<Sprite>(inimigo))
+                                {
+                                    t.posicao.Y += 60;
+                                }
+                                este = false;
+                            }
+                        }
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+                            s.posicao.X += inimigoVelocidade;
+                            s.frameAtual++;
+                            if (s.frameAtual > 1) { s.frameAtual = 0; }
+                        }
+                        este = true;
+                    }
+
+                    if (velocidadeInimigo >= 150 && inimigo.Count < 16 && inimigo.Count > 10)
+                    {
+                        velocidadeInimigo -= velocidadeInimigo;
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+
+                            if ((s.posicao.X + s.largura / 2 >= 580
+                                || (s.posicao.X <= 30)) && este == true)
+                            {
+                                inimigoVelocidade *= -1;
+                                foreach (Sprite t in new List<Sprite>(inimigo))
+                                {
+                                    t.posicao.Y += 60;
+                                }
+                                este = false;
+                            }
+                        }
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+                            s.posicao.X += inimigoVelocidade;
+                            s.frameAtual++;
+                            if (s.frameAtual > 1) { s.frameAtual = 0; }
+                        }
+                        este = true;
+                    }
+
+                    if (velocidadeInimigo >= 80 && inimigo.Count < 11 && inimigo.Count > 3)
+                    {
+                        velocidadeInimigo -= velocidadeInimigo;
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+
+                            if ((s.posicao.X + s.largura / 2 >= 580
+                                || (s.posicao.X <= 30)) && este == true)
+                            {
+                                inimigoVelocidade *= -1;
+                                foreach (Sprite t in new List<Sprite>(inimigo))
+                                {
+                                    t.posicao.Y += 60;
+                                }
+                                este = false;
+                            }
+                        }
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+                            s.posicao.X += inimigoVelocidade;
+                            s.frameAtual++;
+                            if (s.frameAtual > 1) { s.frameAtual = 0; }
+                        }
+                        este = true;
+                    }
+
+                    if (velocidadeInimigo >= 25 && inimigo.Count < 4)
+                    {
+                        velocidadeInimigo -= velocidadeInimigo;
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+
+                            if ((s.posicao.X + s.largura / 2 >= 580
+                                || (s.posicao.X <= 30)) && este == true)
+                            {
+                                inimigoVelocidade *= -1;
+                                foreach (Sprite t in new List<Sprite>(inimigo))
+                                {
+                                    t.posicao.Y += 60;
+                                }
+                                este = false;
+                            }
+                        }
+                        foreach (Sprite s in new List<Sprite>(inimigo))
+                        {
+                            s.posicao.X += inimigoVelocidade;
+                            s.frameAtual++;
+                            if (s.frameAtual > 1) { s.frameAtual = 0; }
+                        }
+                        este = true;
+                    }
+#endregion
+
+                    #region Colisao entre tiro e inimigo
+
+                    foreach (Sprite s in new List<Sprite>(inimigo))
+                    {
+                        foreach (Sprite t in new List<Sprite>(tiro))
+                        {
+                            if (s.DetectaColisao(t))
+                            {
+                                if (!mudo) { somEsplosaoInimigo.Play(); }
+                                inimigo.Remove(s);
+                                tiro.Remove(t);
+                                pontos += pontosPorAcerto;
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region Controle de tiro do inimigo
+
+                    if (ultimoTiroInimigo < 1501)
+                    {
+                        ultimoTiroInimigo += gameTime.ElapsedGameTime.Milliseconds;
+                    }
+                    foreach (Sprite s in new List<Sprite>(inimigo))
+                    {
+                        if (s.posicao.X < nave.posicao.X &&
+                            s.posicao.X + 50 >= nave.posicao.X &&
+                            ultimoTiroInimigo > tempoTiroInimigo)
+                        {
+                            ultimoTiroInimigo -= tempoTiroInimigo;
+                            tiroInimigo.Add(new Sprite(Content.Load<Texture2D>(@"Imagens\tiro2"),
+                                new Vector2(s.posicao.X + s.largura / 4, s.posicao.Y + s.altura)));
+                            if (!mudo) { somTiro.Play();}
+                        }
+                    }
+                    foreach (Sprite t in new List<Sprite>(tiroInimigo))
+                    {
+                        t.posicao.Y += 6;
+                        if (t.posicao.Y > 800) { tiroInimigo.Remove(t); }
+                    }
+                    #endregion
+
+                    #region Verifica se tiro inimigo atinge nave
+
+                    foreach (Sprite t in new List<Sprite>(tiroInimigo))
+                    {
+                        if (t.DetectaColisaoNave(nave))
+                        {
+                            if (!mudo) { somExplosaoNave.Play(); }
+                            tiro.Clear();
+                            tiroInimigo.Clear();
+                            inimigo.Clear();
+
+                            if (quantidadeVidas == 0)
+                            {
+                                quantidadeVidas = 3;
+                                if (pontos > maiorPontuacao)
+                                {
+                                    score = new Score(pontos);
+                                    maiorPontuacao = score.recorde;
+                                    GravarScore.Salvar<Score>(@".\record.sav", score);
+                                }
+                                pontos = 0;
+                                estadojogo = EstadoJogo.Encerrado;
+                            }
+                            else
+                                {
+                                    --quantidadeVidas;
+                                    estadojogo = EstadoJogo.PerdeuVida;
+
+                                }
+                        }
+                        break;
+                    }
+                    #endregion
+
+                    #region Verifica se inimigo invade territorio da nave
+                    
+                    foreach (Sprite s in new List<Sprite>(inimigo))
+                    {
+                        if (s.posicao.Y > 640)
+                        {
+                            if (!mudo) { somExplosaoNave.Play(); }
+                            inimigo.Clear();
+                            tiro.Clear();
+
+                            if (quantidadeVidas == 0)
+                            {
+                                estadojogo = EstadoJogo.Encerrado;
+                                quantidadeVidas = 3;
+                                if (pontos > maiorPontuacao)
+                                {
+                                    score = new Score(pontos);
+                                    maiorPontuacao = score.recorde;
+                                    GravarScore.Salvar<Score>(@".\record.sav", score);
+                                }
+                                pontos = 0;
+                            }
+                            else
+                            {
+                                --quantidadeVidas;
+                                estadojogo = EstadoJogo.PerdeuVida;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                    #endregion
+
+                #endregion
+
+                #region Gerador de fases
+                case EstadoJogo.GerarFase:
+
+                    string spriteInimigo = geraInimigo.SortearInimigo();
+                    int cor = geraInimigo.SortearCor();
+                    int posx = 35;
+                    int posy = 100;
+                    for (int i = 0; i < 30; i++)
+                    {
+                        if (i == 6 || i == 12 || i == 18 || i == 24)
+                        {
+                            posy += 70;
+                            posx = 35;
+                            spriteInimigo = geraInimigo.SortearInimigo();
+                            cor = geraInimigo.SortearCor();
+                        }
+
+                        inimigo.Add(new Sprite(Content.Load<Texture2D>(spriteInimigo),
+                            new Vector2(posx,posy),0,cor));
+                        posx += 60;
+                        
+                    }
+                    int direcao = 0;
+                    direcao += inimigoVelocidade;
+                    if (direcao < 0) { inimigoVelocidade *= -1; direcao = 0; }
+                    else { direcao = 0; }
+
+                    estadojogo = EstadoJogo.EmAndamento;
+                    break;
+                #endregion
+
+            #endregion
+
+            }
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+            switch (estadojogo)
+            {
+                case EstadoJogo.PerdeuVida:
+
+                    break;
+
+                case EstadoJogo.Encerrado:
+                    telaAbertura.Desenhar(spriteBatch);
+
+                    spriteBatch.DrawString(fontescore, "Recorde: " + maiorPontuacao.ToString(), new Vector2(210, 470),
+                        Color.White);
+                    break;
+
+                case EstadoJogo.Sobre:
+                    telaFundoSobre.Desenhar(spriteBatch);
+                    break;
+
+                case EstadoJogo.GerarFase:
+                    break;
+
+                #region Desenhar no estado em andamento
+
+                case EstadoJogo.EmAndamento:
+
+                    telaFundo.Desenhar(spriteBatch);
+                    nave.Desenhar(spriteBatch);
+
+
+                    foreach (Sprite s in new List<Sprite>(inimigo))
+                    {
+                        s.DesenharInimigo(spriteBatch, new Rectangle(s.frameAtual *s.largura /2,
+                            0, s.largura / 2, s.altura));
+                        
+                    }
+                    foreach (Sprite t in new List<Sprite>(tiro))
+                    {
+                        t.Desenhar(spriteBatch);
+                    }
+
+                    foreach (Sprite ti in new List<Sprite>(tiroInimigo))
+                    {
+                        ti.Desenhar(spriteBatch);
+                    }
+
+                    vidas.Desenhar(spriteBatch, new Rectangle(0, 0, quantidadeVidas * vidas.largura / 3, 
+                        vidas.altura));
+
+                    spriteBatch.DrawString(fonte, "Pontos: " + pontos.ToString(), new Vector2(60,0),
+                        Color.White);
+
+                    spriteBatch.DrawString(fontescore, "Recorde: " + maiorPontuacao.ToString(), new Vector2(320, 0),
+                        Color.White);
+
+                    break;
+                #endregion
+
+                #region Desenhar no estado pause
+
+                case EstadoJogo.Pausa:
+
+                    telaFundo.Desenhar(spriteBatch);
+                    nave.Desenhar(spriteBatch);
+
+
+                    foreach (Sprite s in new List<Sprite>(inimigo))
+                    {
+                        s.DesenharInimigo(spriteBatch, new Rectangle(s.frameAtual * s.largura / 2,
+                            0, s.largura / 2, s.altura));
+
+                    }
+                    foreach (Sprite t in new List<Sprite>(tiro))
+                    {
+                        t.Desenhar(spriteBatch);
+                    }
+
+                    foreach (Sprite ti in new List<Sprite>(tiroInimigo))
+                    {
+                        ti.Desenhar(spriteBatch);
+                    }
+
+                    vidas.Desenhar(spriteBatch, new Rectangle(0, 0, quantidadeVidas * vidas.largura / 3,
+                        vidas.altura));
+
+                    spriteBatch.DrawString(fonte, "Pontos: " + pontos.ToString(), new Vector2(60, 0),
+                        Color.White);
+
+                    spriteBatch.DrawString(fontescore, "Recorde: " + maiorPontuacao.ToString(), new Vector2(320, 0),
+                        Color.White);
+
+                    break;
+                #endregion
+
+            }
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+    }
+}
