@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Inimigo : MonoBehaviour
 {
+    Rigidbody2D rigibody;
+    byte direcao;
+    float countShoot;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +18,14 @@ public class Inimigo : MonoBehaviour
     void Update()
     {
         
+    }
+
+    void Shoot()
+    {
+
+    }
+    void Move()
+    {
+
     }
 }

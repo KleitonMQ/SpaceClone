@@ -34,4 +34,9 @@ public class Nave : MonoBehaviour
     {
 
     }
+
+    void Deadh()
+    {
+
+    }
 }
