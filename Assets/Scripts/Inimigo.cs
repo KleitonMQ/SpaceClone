@@ -59,17 +59,22 @@ public class Inimigo : MonoBehaviour
         {
             enemyTransform.position = new Vector3(enemyTransform.position.x - 0.2f, enemyTransform.position.y, enemyTransform.position.z);
             enemySpeed= 0;
+            if (spriteFrame == 0) spriteFrame = 1;
+            else spriteFrame = 0;
         }
         if (enemySpeed>1 && direction==0)
         {
             enemyTransform.position = new Vector3(enemyTransform.position.x + 0.2f, enemyTransform.position.y, enemyTransform.position.z);
+            enemySpeed= 0;
+            if (spriteFrame == 0) spriteFrame = 1;
+            else spriteFrame = 0;
 
         }
         
     }
     void UseSpriteFrame()
     {
-        enemyAnimator.SetInteger("transition", 0);
+        enemyAnimator.SetInteger("transition", spriteFrame);
     }
 
     private void CanShoot()
