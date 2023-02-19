@@ -9,9 +9,9 @@ public class Inimigo : MonoBehaviour
     public Transform enemyShootPoint;
     private Transform enemyTransform;
 
-    public int direcao;
+    public int direction;
     public int spriteFrame;
-    private float enemySpeed;
+    public float enemySpeed;
 
     private bool canShoot;
     private int sortShoot;
@@ -26,7 +26,8 @@ public class Inimigo : MonoBehaviour
         enemyAnimator = GetComponent<Animator>();
         enemyTransform= GetComponent<Transform>();
 
-        direcao= 1;
+        enemySpeed = 0;
+        direction= 1;
         isAlive= true;
         spriteFrame= 0;
 
@@ -38,9 +39,10 @@ public class Inimigo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemySpeed =+ 1 * Time.deltaTime;
+        enemySpeed += 0.3f * Time.deltaTime;
         UseSpriteFrame();
         Shoot();
+        Move();
     }
 
     void Shoot()
@@ -53,11 +55,12 @@ public class Inimigo : MonoBehaviour
     }
     void Move()
     {
-        if (enemySpeed>1 && direcao==1)
+        if (enemySpeed>1 && direction==1)
         {
             enemyTransform.position = new Vector3(enemyTransform.position.x - 0.2f, enemyTransform.position.y, enemyTransform.position.z);
+            enemySpeed= 0;
         }
-        if (enemySpeed>1 && direcao==0)
+        if (enemySpeed>1 && direction==0)
         {
             enemyTransform.position = new Vector3(enemyTransform.position.x + 0.2f, enemyTransform.position.y, enemyTransform.position.z);
 
