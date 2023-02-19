@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Inimigo : MonoBehaviour
@@ -11,8 +12,8 @@ public class Inimigo : MonoBehaviour
 
     public int direction;
     public int spriteFrame;
+    public float enemyMove;
     public float enemySpeed;
-
     private bool canShoot;
     private int sortShoot;
     public int countShoot;
@@ -24,24 +25,25 @@ public class Inimigo : MonoBehaviour
     void Start()
     {
         enemyAnimator = GetComponent<Animator>();
-        enemyTransform= GetComponent<Transform>();
+        enemyTransform = GetComponent<Transform>();
 
-        enemySpeed = 0;
-        direction= 1;
-        isAlive= true;
-        spriteFrame= 0;
+        enemySpeed = 0.5f;
+        enemyMove = 0;
+        direction = 1;
+        isAlive = true;
+        spriteFrame = 0;
 
         CanShoot();
-        
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        enemySpeed += 0.3f * Time.deltaTime;
+        enemyMove += enemySpeed * Time.deltaTime;
         UseSpriteFrame();
-        Shoot();
+        //Shoot();
         Move();
     }
 
@@ -55,22 +57,21 @@ public class Inimigo : MonoBehaviour
     }
     void Move()
     {
-        if (enemySpeed>1 && direction==1)
+        if (enemyMove > 1 && direction == 1)
         {
             enemyTransform.position = new Vector3(enemyTransform.position.x - 0.2f, enemyTransform.position.y, enemyTransform.position.z);
-            enemySpeed= 0;
+            enemyMove = 0;
             if (spriteFrame == 0) spriteFrame = 1;
             else spriteFrame = 0;
         }
-        if (enemySpeed>1 && direction==0)
+        if (enemyMove > 1 && direction == -1)
         {
             enemyTransform.position = new Vector3(enemyTransform.position.x + 0.2f, enemyTransform.position.y, enemyTransform.position.z);
-            enemySpeed= 0;
+            enemyMove = 0;
             if (spriteFrame == 0) spriteFrame = 1;
             else spriteFrame = 0;
-
         }
-        
+
     }
     void UseSpriteFrame()
     {
@@ -85,7 +86,35 @@ public class Inimigo : MonoBehaviour
             canShoot = true;
             countShoot = Random.Range(0, 10);
         }
-        else canShoot= false;
+        else canShoot = false;
     }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.gameObject.tag == "WallLeft")
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject enemy in enemies)
+            {
+                enemy.GetComponent<Inimigo>().ChangeDirection();
+                
+            }
+        }
+        if (collision.gameObject.tag == "WallRight")
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject enemy in enemies)
+            {
+                enemy.GetComponent<Inimigo>().ChangeDirection();
+
+            }
+        }
+    }
+
+    void ChangeDirection()
+    {
+
+        direction *= -1;
+    }
 }
