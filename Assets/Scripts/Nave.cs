@@ -34,9 +34,21 @@ public class Nave : MonoBehaviour
     {
         float movement = Input.GetAxis("Horizontal");
 
-        shipRigidbody.velocity = new Vector2(movement * speed, shipRigidbody.velocity.y);
+        if (movement > 0 && transform.position.x < 2.55)
+        {
+            shipRigidbody.velocity = new Vector2(movement * speed, shipRigidbody.velocity.y);
+        }
 
+        if (movement < 0 && transform.position.x > -2.55)
+        {
+            shipRigidbody.velocity = new Vector2(movement * speed, shipRigidbody.velocity.y);
+        }
 
+        if (transform.position.x < -2.55)
+            transform.position = new Vector2(-2.55f, transform.position.y);
+
+        if (transform.position.x > 2.55)
+            transform.position = new Vector2(2.55f, transform.position.y);
     }
     void Shoot()
     {
@@ -46,7 +58,7 @@ public class Nave : MonoBehaviour
             {
                 canShoot = false;
                 Instantiate(shoot, shootPoint.position, shootPoint.rotation);
-                countDown= 1f;
+                countDown= 0.7f;
             }
         }
         if (!canShoot)
