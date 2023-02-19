@@ -65,6 +65,7 @@ public class Inimigo : MonoBehaviour
             enemyTransform.position = new Vector3(enemyTransform.position.x + 0.2f, enemyTransform.position.y, enemyTransform.position.z);
 
         }
+        
     }
     void UseSpriteFrame()
     {
