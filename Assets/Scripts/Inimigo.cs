@@ -135,7 +135,7 @@ public class Inimigo : MonoBehaviour
         isAlive = false;
         GetComponent<BoxCollider2D>().enabled= false;
         enemyAnimator.SetBool("explosion", true);
-        Invoke("Destroy", 0.5f);
+        Invoke(nameof(Destroy), 0.5f);
         
     }
 

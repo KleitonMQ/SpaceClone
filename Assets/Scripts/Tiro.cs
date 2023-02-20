@@ -27,5 +27,11 @@ public class Tiro : MonoBehaviour
             collision.GetComponent<Inimigo>().Explosion();
             Destroy(gameObject);
         }
+
+        if (collision.gameObject.tag == "Bonus")
+        {
+            collision.GetComponent<Bonus>().Explosion();
+            Destroy(gameObject);
+        }
     }
 }
