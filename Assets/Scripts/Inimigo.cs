@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Inimigo : MonoBehaviour
 {
+    public bool enemyCanDown;
     private Animator enemyAnimator;
     public GameObject enemyShoot;
     public Transform enemyShootPoint;
@@ -28,6 +29,7 @@ public class Inimigo : MonoBehaviour
         enemyAnimator = GetComponent<Animator>();
         enemyTransform = GetComponent<Transform>();
 
+        enemyCanDown= true;
         enemySpeed = 1f;
         enemyMove = 0;
         direction = 1;
@@ -124,8 +126,16 @@ public class Inimigo : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         if ((collision.gameObject.tag == "WallRight" || collision.gameObject.tag == "WallLeft") && collisionOcurred)
+        { 
             collisionOcurred = false;
-        
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject enemy in enemies)
+            {
+                collisionOcurred = true;
+                enemy.GetComponent<Inimigo>().EnemyCanDown();
+
+            }
+        }
     }
 
     void ChangeDirectionLeft()
@@ -143,7 +153,16 @@ public class Inimigo : MonoBehaviour
 
     void EnemyDown()
     {
-        enemyTransform.position = new Vector3(enemyTransform.position.x, enemyTransform.position.y - 0.07f, enemyTransform.position.z);
+        if (enemyCanDown)
+        {
+            enemyTransform.position = new Vector3(enemyTransform.position.x, enemyTransform.position.y - 0.1f, enemyTransform.position.z);
+            enemyCanDown= false;
+        }
+        
+    }
+    void EnemyCanDown()
+    {
+        enemyCanDown = true;
     }
 
     public void Explosion()

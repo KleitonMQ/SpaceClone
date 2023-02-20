@@ -98,7 +98,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.0037560463, y: -0.015025109}
@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f674ae281482e2c47af71056e2d4cea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyCanDown: 0
   enemyShoot: {fileID: 9150792085309093079, guid: 9112486f27510bb4ab72fad73c76c9cc, type: 3}
   enemyShootPoint: {fileID: 6659800131832976661}
   direction: 0
