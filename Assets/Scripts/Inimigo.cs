@@ -125,4 +125,9 @@ public class Inimigo : MonoBehaviour
     {
         enemyTransform.position = new Vector3(enemyTransform.position.x, enemyTransform.position.y - 0.2f, enemyTransform.position.z);
     }
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
 }
