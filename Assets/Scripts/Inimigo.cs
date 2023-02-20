@@ -127,11 +127,13 @@ public class Inimigo : MonoBehaviour
     {
         if ((collision.gameObject.tag == "WallRight" || collision.gameObject.tag == "WallLeft") && collisionOcurred)
         { 
-            collisionOcurred = false;
+            
+
             GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
             foreach (GameObject enemy in enemies)
             {
                 collisionOcurred = true;
+                collisionOcurred = false;
                 enemy.GetComponent<Inimigo>().EnemyCanDown();
 
             }

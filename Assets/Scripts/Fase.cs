@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class Fase : MonoBehaviour
@@ -10,25 +11,27 @@ public class Fase : MonoBehaviour
 
     public int quantityLines = 6;
     public int quantityColluns = 5;
-    
 
-    private Vector2 initialPosition= new Vector2(2.45f,2.9f);
+
+    private Vector2 initialPosition = new Vector2(2.45f, 2.9f);
 
     private float countSpawnBonus;
     private int bonusFrequency;
     private int health;
     private int score;
     private int faseNumber;
-    
+
+
     // Start is called before the first frame update
     void Start()
     {
-        health= 3;
+        health = 3;
         score = 0;
-        faseNumber= 1;
-        bonusFrequency= 15;
+        faseNumber = 1;
+        bonusFrequency = 15;
         SpawnEnemy();
         FrequencySpawnBonus();
+
     }
 
     // Update is called once per frame
@@ -36,7 +39,7 @@ public class Fase : MonoBehaviour
     {
         countSpawnBonus += Time.deltaTime;
         SpawnBonus();
-        
+        DifficultUp();
     }
 
     public void SpawnEnemy()
@@ -46,11 +49,11 @@ public class Fase : MonoBehaviour
 
         Vector2 currentPosition = initialPosition;
 
-        for (int i=0; i<quantityLines; i++)
+        for (int i = 0; i < quantityLines; i++)
         {
             int randonEnemy = Random.Range(0, enemys.Length);
 
-            for (int j=0; j<quantityColluns; j++)
+            for (int j = 0; j < quantityColluns; j++)
             {
                 GameObject inimigo = Instantiate(enemys[randonEnemy], currentPosition, Quaternion.identity);
 
@@ -75,6 +78,45 @@ public class Fase : MonoBehaviour
             bonusFrequency++;
             FrequencySpawnBonus();
         }
-        
+
+    }
+
+    void DifficultUp()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (enemys.Length > 20)
+        {
+
+        }
+        switch (enemies.Length)
+        {
+            case int n when n > 10 && n < 20:
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.GetComponent<Inimigo>().enemySpeed = 2f;
+                }
+                break;
+
+            case int n when n > 5 && n < 11:
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.GetComponent<Inimigo>().enemySpeed = 4f;
+                }
+                break;
+            case int n when n > 0 && n < 6:
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.GetComponent<Inimigo>().enemySpeed = 6f;
+                }
+                break;
+
+            default:
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.GetComponent<Inimigo>().enemySpeed = 1f;
+                }
+                break;
+        }
+
     }
 }
