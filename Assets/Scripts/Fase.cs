@@ -5,11 +5,17 @@ using UnityEngine;
 public class Fase : MonoBehaviour
 {
     public GameObject[] enemys;
+    public GameObject bonus;
+    public GameObject bonusSpawn;
+
     public int quantityLines = 6;
     public int quantityColluns = 5;
+    
 
     private Vector2 initialPosition= new Vector2(2.45f,2.9f);
 
+    private float countSpawnBonus;
+    private int bonusFrequency;
     private int health;
     private int score;
     private int faseNumber;
@@ -20,12 +26,16 @@ public class Fase : MonoBehaviour
         health= 3;
         score = 0;
         faseNumber= 1;
+        bonusFrequency= 15;
         SpawnEnemy();
+        FrequencySpawnBonus();
     }
 
     // Update is called once per frame
     void Update()
     {
+        countSpawnBonus += Time.deltaTime;
+        SpawnBonus();
         
     }
 
@@ -51,5 +61,20 @@ public class Fase : MonoBehaviour
         }
     }
 
+    void FrequencySpawnBonus()
+    {
+        bonusFrequency = Random.Range(15, bonusFrequency + faseNumber);
+    }
 
+    void SpawnBonus()
+    {
+        if (countSpawnBonus > bonusFrequency)
+        {
+            Instantiate(bonus, bonusSpawn.transform.position, Quaternion.identity);
+            countSpawnBonus = 0;
+            bonusFrequency++;
+            FrequencySpawnBonus();
+        }
+        
+    }
 }

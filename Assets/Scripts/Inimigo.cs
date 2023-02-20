@@ -28,7 +28,7 @@ public class Inimigo : MonoBehaviour
         enemyAnimator = GetComponent<Animator>();
         enemyTransform = GetComponent<Transform>();
 
-        enemySpeed = 0.5f;
+        enemySpeed = 1f;
         enemyMove = 0;
         direction = 1;
         isAlive = true;
@@ -125,13 +125,13 @@ public class Inimigo : MonoBehaviour
     {
         if ((collision.gameObject.tag == "WallRight" || collision.gameObject.tag == "WallLeft") && collisionOcurred)
             collisionOcurred = false;
+        
     }
 
     void ChangeDirectionLeft()
     {
         direction = -1;
         EnemyDown();
-
     }
     void ChangeDirectionRight()
     {
@@ -143,7 +143,7 @@ public class Inimigo : MonoBehaviour
 
     void EnemyDown()
     {
-        enemyTransform.position = new Vector3(enemyTransform.position.x, enemyTransform.position.y - 0.2f, enemyTransform.position.z);
+        enemyTransform.position = new Vector3(enemyTransform.position.x, enemyTransform.position.y - 0.07f, enemyTransform.position.z);
     }
 
     public void Explosion()
