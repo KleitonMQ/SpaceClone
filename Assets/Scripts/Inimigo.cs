@@ -41,10 +41,14 @@ public class Inimigo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemyMove += enemySpeed * Time.deltaTime;
-        UseSpriteFrame();
-        Shoot();
-        Move();
+        if (isAlive)
+        {
+            enemyMove += enemySpeed * Time.deltaTime;
+            UseSpriteFrame();
+            Shoot();
+            Move();
+        }
+        
     }
 
     void Shoot()
@@ -128,6 +132,8 @@ public class Inimigo : MonoBehaviour
 
     public void Explosion()
     {
+        isAlive = false;
+        GetComponent<BoxCollider2D>().enabled= false;
         enemyAnimator.SetBool("explosion", true);
         Invoke("Destroy", 0.5f);
         
