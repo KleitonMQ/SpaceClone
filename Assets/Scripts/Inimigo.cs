@@ -10,6 +10,7 @@ public class Inimigo : MonoBehaviour
     public Transform enemyShootPoint;
     private Transform enemyTransform;
 
+    private bool collisionOcurred;
     public int direction;
     public int spriteFrame;
     public float enemyMove;
@@ -32,6 +33,7 @@ public class Inimigo : MonoBehaviour
         direction = 1;
         isAlive = true;
         spriteFrame = 0;
+        collisionOcurred = false;
 
         CanShoot();
 
@@ -97,30 +99,44 @@ public class Inimigo : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.gameObject.tag == "WallLeft")
+        if (collision.gameObject.tag == "WallLeft" && !collisionOcurred)
         {
             GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
             foreach (GameObject enemy in enemies)
             {
-                enemy.GetComponent<Inimigo>().ChangeDirection();
+                collisionOcurred = true;
+                enemy.GetComponent<Inimigo>().ChangeDirectionLeft();
                 
             }
         }
-        if (collision.gameObject.tag == "WallRight")
+        if (collision.gameObject.tag == "WallRight" && !collisionOcurred)
         {
             GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
             foreach (GameObject enemy in enemies)
             {
-                enemy.GetComponent<Inimigo>().ChangeDirection();
+                collisionOcurred = true;
+                enemy.GetComponent<Inimigo>().ChangeDirectionRight();
 
             }
         }
     }
 
-    void ChangeDirection()
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if ((collision.gameObject.tag == "WallRight" || collision.gameObject.tag == "WallLeft") && collisionOcurred)
+            collisionOcurred = false;
+    }
+
+    void ChangeDirectionLeft()
+    {
+        direction = -1;
+        EnemyDown();
+
+    }
+    void ChangeDirectionRight()
     {
 
-        direction *= -1;
+        direction = 1;
         EnemyDown();
 
     }
