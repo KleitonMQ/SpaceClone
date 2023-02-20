@@ -15,6 +15,7 @@ public class Bonus : MonoBehaviour
         isAlive= true;
         bonusAnimator= GetComponent<Animator>();
         bonusTransform = GetComponent<Transform>();
+        Destroy(gameObject, 6f);
     }
 
     // Update is called once per frame
