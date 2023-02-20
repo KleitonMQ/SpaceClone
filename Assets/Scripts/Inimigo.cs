@@ -43,7 +43,7 @@ public class Inimigo : MonoBehaviour
     {
         enemyMove += enemySpeed * Time.deltaTime;
         UseSpriteFrame();
-        //Shoot();
+        Shoot();
         Move();
     }
 
@@ -53,6 +53,7 @@ public class Inimigo : MonoBehaviour
         if (canShoot && shoot > countShoot)
         {
             Instantiate(enemyShoot, enemyShootPoint.position, enemyShootPoint.rotation);
+            shoot= 0;
         }
     }
     void Move()
@@ -80,11 +81,11 @@ public class Inimigo : MonoBehaviour
 
     private void CanShoot()
     {
-        sortShoot = Random.Range(0, 10);
+        sortShoot = Random.Range(0, 15);
         if (sortShoot < 5)
         {
             canShoot = true;
-            countShoot = Random.Range(0, 10);
+            countShoot = Random.Range(0, 15);
         }
         else canShoot = false;
     }
@@ -116,5 +117,12 @@ public class Inimigo : MonoBehaviour
     {
 
         direction *= -1;
+        EnemyDown();
+
+    }
+
+    void EnemyDown()
+    {
+        enemyTransform.position = new Vector3(enemyTransform.position.x, enemyTransform.position.y - 0.2f, enemyTransform.position.z);
     }
 }
