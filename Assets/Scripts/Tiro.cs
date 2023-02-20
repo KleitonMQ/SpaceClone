@@ -24,7 +24,7 @@ public class Tiro : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            collision.GetComponent<Inimigo>().Destroy();
+            collision.GetComponent<Inimigo>().Explosion();
             Destroy(gameObject);
         }
     }
