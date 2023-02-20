@@ -86,10 +86,10 @@ public class Inimigo : MonoBehaviour
     private void CanShoot()
     {
         sortShoot = Random.Range(0, 15);
-        if (sortShoot < 5)
+        if (sortShoot < 7)
         {
             canShoot = true;
-            countShoot = Random.Range(0, 15);
+            countShoot = Random.Range(10, 30);
         }
         else canShoot = false;
     }
