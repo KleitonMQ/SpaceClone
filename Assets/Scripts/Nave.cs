@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Nave : MonoBehaviour
 {
+    public static bool gameOver;
     public float speed;
     public bool isIlive;
     public bool canShoot;
@@ -87,9 +88,11 @@ public class Nave : MonoBehaviour
     {
         naveAnimator.SetInteger("explosion", 1);
         isIlive = false;
-        Invoke(nameof(AfterDeath),2f);
         OnDeath?.Invoke();
-
+        if (!gameOver)
+        {
+            Invoke(nameof(AfterDeath), 2f);
+        }
     }
 
     void AfterDeath()

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Fase : MonoBehaviour
@@ -180,7 +182,8 @@ public class Fase : MonoBehaviour
         lives--;
         if (lives == 0)
         {
-            GameOver();
+            Nave.gameOver= true;
+            Invoke(nameof(GameOver), 3f);
         }
     }
     void GameOver()
@@ -189,7 +192,7 @@ public class Fase : MonoBehaviour
         {
             PlayerPrefs.SetInt("score", score);
         }
-
+        SceneManager.LoadScene(2);
     }
 
     public void AddScore(int scorePoint)
@@ -200,6 +203,4 @@ public class Fase : MonoBehaviour
     {
         scoreText.text = "Score: " + score;
     }
-
-    
 }
