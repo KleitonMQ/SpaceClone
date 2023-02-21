@@ -9,6 +9,8 @@ public class Bonus : MonoBehaviour
     
     public float speed;
     public bool isAlive;
+
+    public int scorePoint;
     // Start is called before the first frame update
     void Start()
     {

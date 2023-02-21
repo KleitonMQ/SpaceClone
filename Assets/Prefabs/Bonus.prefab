@@ -170,6 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1.5
   isAlive: 0
+  scorePoint: 100
 --- !u!1 &8485282390424098650
 GameObject:
   m_ObjectHideFlags: 0

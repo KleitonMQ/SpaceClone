@@ -146,9 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f674ae281482e2c47af71056e2d4cea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyCanDown: 0
   enemyShoot: {fileID: 9150792085309093079, guid: 9112486f27510bb4ab72fad73c76c9cc, type: 3}
   enemyShootPoint: {fileID: 8152306547846181101}
+  enemyCanDown: 0
   direction: 0
   spriteFrame: 0
   enemyMove: 0
@@ -156,6 +156,7 @@ MonoBehaviour:
   countShoot: 0
   shoot: 0
   isAlive: 0
+  scorePoint: 40
 --- !u!1 &8560275214837588958
 GameObject:
   m_ObjectHideFlags: 0

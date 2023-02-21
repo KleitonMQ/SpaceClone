@@ -7,24 +7,26 @@ public class Inimigo : MonoBehaviour
 {
     static public bool GameRun;
 
-    public bool enemyCanDown;
+    
     private Animator enemyAnimator;
     public GameObject enemyShoot;
     public Transform enemyShootPoint;
     private Transform enemyTransform;
+    private Fase fase;
 
     private bool collisionOcurred;
+    private int sortShoot;
+    private bool canShoot;
+
+    public bool enemyCanDown;
     public int direction;
     public int spriteFrame;
     public float enemyMove;
     public float enemySpeed;
-    private bool canShoot;
-    private int sortShoot;
     public int countShoot;
     public float shoot;
-
     public bool isAlive;
-
+    public int scorePoint;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,7 +44,7 @@ public class Inimigo : MonoBehaviour
 
         CanShoot();
 
-
+        fase= FindObjectOfType<Fase>();
     }
 
     // Update is called once per frame
@@ -183,6 +185,7 @@ public class Inimigo : MonoBehaviour
 
     void Destroy()
     {
+        fase.AddScore(scorePoint);
         Destroy(gameObject);
     }
 }

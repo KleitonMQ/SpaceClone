@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Fase : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Fase : MonoBehaviour
     public GameObject bonus;
     public GameObject bonusSpawn;
     public GameObject lifeSprite;
+    public Text scoreText;
 
     public int quantityLines = 6;
     public int quantityColluns = 5;
@@ -22,6 +24,7 @@ public class Fase : MonoBehaviour
     private int bonusFrequency;
     private int lives;
     private int score;
+    private int maxScore;
     private int faseNumber;
 
 
@@ -162,10 +165,7 @@ public class Fase : MonoBehaviour
                 currentPosition.x -= spaceHorizontal;
             }
         }
-        
 
-        
-        Debug.Log(lifes.Length);
         if (lifes.Length > lives)
         {
             foreach (GameObject life in lifes)
@@ -175,5 +175,14 @@ public class Fase : MonoBehaviour
     void OnNaveDeath()
     {
         lives--;
+    }
+
+    public void AddScore(int scorePoint)
+    {
+        score += scorePoint;
+    }
+    void ShowScore()
+    {
+        scoreText.text = "Score: " + score;
     }
 }
