@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using UnityEngine;
 
@@ -149,13 +150,26 @@ public class Fase : MonoBehaviour
         float spaceHorizontal = 0.3f;
         
         Vector2 currentPosition = initialPositionLife;
+        GameObject[] lifes = GameObject.FindGameObjectsWithTag("Life");
 
-        for (int i = 0; i < lives; i++)
+        if (lifes.Length < lives)
         {
-            
+            for (int i = 0; i < lives; i++)
+            {
+
                 GameObject life = Instantiate(lifeSprite, currentPosition, Quaternion.identity);
 
                 currentPosition.x -= spaceHorizontal;
+            }
+        }
+        
+
+        
+        Debug.Log(lifes.Length);
+        if (lifes.Length > lives)
+        {
+            foreach (GameObject life in lifes)
+            Destroy(life);
         }
     }
     void OnNaveDeath()
