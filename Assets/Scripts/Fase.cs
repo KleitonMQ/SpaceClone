@@ -11,7 +11,7 @@ public class Fase : MonoBehaviour
 
     public int quantityLines = 6;
     public int quantityColluns = 5;
-    
+
 
     private Vector2 initialPosition = new Vector2(2.45f, 2.9f);
 
@@ -40,7 +40,7 @@ public class Fase : MonoBehaviour
         countSpawnBonus += Time.deltaTime;
         SpawnBonus();
         DifficultUp();
-
+        EnemyCount();
     }
 
     public void SpawnEnemy()
@@ -94,37 +94,46 @@ public class Fase : MonoBehaviour
             case int n when n > 10 && n < 20:
                 foreach (GameObject enemy in enemies)
                 {
-                    enemy.GetComponent<Inimigo>().enemySpeed = 2f;
+                    enemy.GetComponent<Inimigo>().enemySpeed = 1f + faseNumber;
                 }
                 break;
 
             case int n when n > 5 && n < 11:
                 foreach (GameObject enemy in enemies)
                 {
-                    enemy.GetComponent<Inimigo>().enemySpeed = 4f;
+                    enemy.GetComponent<Inimigo>().enemySpeed = 4f + faseNumber;
                 }
                 break;
             case int n when n > 1 && n < 6:
                 foreach (GameObject enemy in enemies)
                 {
-                    enemy.GetComponent<Inimigo>().enemySpeed = 6f;
+                    enemy.GetComponent<Inimigo>().enemySpeed = 6f + faseNumber;
                 }
                 break;
 
             case int n when n == 1:
                 foreach (GameObject enemy in enemies)
                 {
-                    enemy.GetComponent<Inimigo>().enemySpeed = 9f;
+                    enemy.GetComponent<Inimigo>().enemySpeed = 9f + faseNumber;
                 }
                 break;
 
             default:
                 foreach (GameObject enemy in enemies)
                 {
-                    enemy.GetComponent<Inimigo>().enemySpeed = 1f;
+                    enemy.GetComponent<Inimigo>().enemySpeed = 1f + faseNumber;
                 }
                 break;
         }
+    }
 
+    public void EnemyCount()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (enemies.Length <= 0)
+        {
+            faseNumber++;
+            SpawnEnemy();
+        }
     }
 }

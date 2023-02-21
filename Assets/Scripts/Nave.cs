@@ -22,6 +22,7 @@ public class Nave : MonoBehaviour
         shipRigidbody = GetComponent<Rigidbody2D>();
         canShoot= true; 
         countDown= 0;
+        isIlive= true;
     }
 
     // Update is called once per frame

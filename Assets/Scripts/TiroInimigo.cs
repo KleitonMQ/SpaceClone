@@ -21,11 +21,11 @@ public class TiroInimigo : MonoBehaviour
         shootRigidbody.velocity = Vector2.down * speed * Time.deltaTime;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            collision.GetComponent<Nave>().Deadh();
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        collision.GetComponent<Nave>().Deadh();
+    //    }
+    //}
 }
