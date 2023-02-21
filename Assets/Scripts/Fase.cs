@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ public class Fase : MonoBehaviour
     public GameObject bonus;
     public GameObject bonusSpawn;
     public GameObject lifeSprite;
-    public Text scoreText;
+    public TextMeshProUGUI scoreText;
 
     public int quantityLines = 6;
     public int quantityColluns = 5;
@@ -53,6 +54,7 @@ public class Fase : MonoBehaviour
         DifficultUp();
         EnemyCount();
         LifeController();
+        ShowScore();
     }
 
     public void SpawnEnemy()
