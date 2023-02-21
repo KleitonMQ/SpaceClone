@@ -25,8 +25,14 @@ public class TiroInimigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.GetComponent<Nave>().Death();
-            Inimigo.GameRun = false;
+            Nave nave = collision.GetComponent<Nave>();
+            if (!nave.hitOnce)
+            {
+                nave.hitOnce = true;
+                collision.GetComponent<Nave>().Death();
+                Inimigo.GameRun = false;
+            }
+            
         }
     }
 }

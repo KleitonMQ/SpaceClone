@@ -9,6 +9,7 @@ public class Nave : MonoBehaviour
     public bool isIlive;
     public bool canShoot;
     private float countDown;
+    public bool hitOnce;
 
     public GameObject shoot;
     public Transform shootPoint;
@@ -101,5 +102,6 @@ public class Nave : MonoBehaviour
         transform.position = new Vector3(0f, -4.637913f);
         isIlive = true;
         Inimigo.GameRun = true;
+        hitOnce= false;
     }
 }
