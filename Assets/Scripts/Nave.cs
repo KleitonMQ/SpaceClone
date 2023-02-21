@@ -13,6 +13,7 @@ public class Nave : MonoBehaviour
 
     public GameObject shoot;
     public Transform shootPoint;
+    public AudioSource explosionSound;
 
     private Rigidbody2D shipRigidbody;
     private Animator naveAnimator;
@@ -23,6 +24,7 @@ public class Nave : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        explosionSound.Stop();
         naveAnimator = GetComponent<Animator>();
         shipRigidbody = GetComponent<Rigidbody2D>();
         canShoot= true; 
@@ -88,6 +90,7 @@ public class Nave : MonoBehaviour
     public void Death()
     {
         naveAnimator.SetInteger("explosion", 1);
+        explosionSound.Play();
         isIlive = false;
         OnDeath?.Invoke();
         if (!gameOver)

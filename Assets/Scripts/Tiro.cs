@@ -6,10 +6,13 @@ using UnityEngine;
 public class Tiro : MonoBehaviour
 {
     private Rigidbody2D shootRigidbody;
+    public AudioSource shootSound;
+
     public float speed;
     // Start is called before the first frame update
     void Start()
     {
+        shootSound.Play();
         shootRigidbody = GetComponent<Rigidbody2D>();
         Destroy(gameObject, 3f);
     }

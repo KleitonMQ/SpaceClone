@@ -12,9 +12,13 @@ public class StartScreen : MonoBehaviour
     public TextMeshProUGUI textScore;
     public GameObject infoHud;
 
+    public AudioSource startSound;
+    public AudioSource musicScreen;
+
     // Start is called before the first frame update
     void Start()
     {
+        startSound.Stop();
         maxScore = PlayerPrefs.GetInt("score");
     }
 
@@ -25,7 +29,10 @@ public class StartScreen : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return) && !showInfo)
         {
-            SceneManager.LoadScene(1);
+            showInfo= !showInfo;
+            startSound.Play();
+            Invoke(nameof(StartGame),0.5f);
+            
         }
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -43,5 +50,10 @@ public class StartScreen : MonoBehaviour
         {
             PlayerPrefs.DeleteAll();
         }
+    }
+
+    void StartGame()
+    {
+        SceneManager.LoadScene(1);
     }
 }

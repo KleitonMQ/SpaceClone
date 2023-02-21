@@ -13,6 +13,7 @@ public class Inimigo : MonoBehaviour
     public Transform enemyShootPoint;
     private Transform enemyTransform;
     private Fase fase;
+    public AudioSource explosionSound;
 
     private bool collisionOcurred;
     private int sortShoot;
@@ -30,6 +31,7 @@ public class Inimigo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        explosionSound.Stop();
         enemyAnimator = GetComponent<Animator>();
         enemyTransform = GetComponent<Transform>();
 
@@ -187,6 +189,7 @@ public class Inimigo : MonoBehaviour
         fase.AddScore(scorePoint);
         GetComponent<BoxCollider2D>().enabled= false;
         enemyAnimator.SetBool("explosion", true);
+        explosionSound.Play();
         Invoke(nameof(Destroy), 0.5f);
         
     }

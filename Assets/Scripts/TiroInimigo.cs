@@ -7,11 +7,13 @@ public class TiroInimigo : MonoBehaviour
     Rigidbody2D shootRigidbody;
     public float speed;
 
+    public AudioSource shootSound;
 
     // Start is called before the first frame update
     void Start()
     {
         shootRigidbody = GetComponent<Rigidbody2D>();
+        shootSound.Play();
         Destroy(gameObject, 3f);
     }
 

@@ -7,6 +7,8 @@ public class Bonus : MonoBehaviour
     Transform bonusTransform;
     Animator bonusAnimator;
     Fase fase;
+    public AudioSource bonusExplosion;
+
     public float speed;
     public bool isAlive;
 
@@ -14,6 +16,7 @@ public class Bonus : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        bonusExplosion.Stop();
         isAlive= true;
         bonusAnimator= GetComponent<Animator>();
         bonusTransform = GetComponent<Transform>();
@@ -42,6 +45,7 @@ public class Bonus : MonoBehaviour
         fase.AddScore(scorePoint);
         GetComponent<BoxCollider2D>().enabled = false;
         bonusAnimator.SetBool("explosion", true);
+        bonusExplosion.Play();
         Invoke(nameof(Destroy), 0.5f);
     }
     void Destroy()
