@@ -11,13 +11,13 @@ public class Fase : MonoBehaviour
 
     public int quantityLines = 6;
     public int quantityColluns = 5;
-
+    
 
     private Vector2 initialPosition = new Vector2(2.45f, 2.9f);
 
     private float countSpawnBonus;
     private int bonusFrequency;
-    private int health;
+    private int lives;
     private int score;
     private int faseNumber;
 
@@ -25,7 +25,7 @@ public class Fase : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        health = 3;
+        lives = 3;
         score = 0;
         faseNumber = 1;
         bonusFrequency = 15;
@@ -40,6 +40,7 @@ public class Fase : MonoBehaviour
         countSpawnBonus += Time.deltaTime;
         SpawnBonus();
         DifficultUp();
+
     }
 
     public void SpawnEnemy()
@@ -103,10 +104,17 @@ public class Fase : MonoBehaviour
                     enemy.GetComponent<Inimigo>().enemySpeed = 4f;
                 }
                 break;
-            case int n when n > 0 && n < 6:
+            case int n when n > 1 && n < 6:
                 foreach (GameObject enemy in enemies)
                 {
                     enemy.GetComponent<Inimigo>().enemySpeed = 6f;
+                }
+                break;
+
+            case int n when n == 1:
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.GetComponent<Inimigo>().enemySpeed = 9f;
                 }
                 break;
 

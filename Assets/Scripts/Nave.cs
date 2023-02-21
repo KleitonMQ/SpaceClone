@@ -13,11 +13,12 @@ public class Nave : MonoBehaviour
     public Transform shootPoint;
 
     private Rigidbody2D shipRigidbody;
-
+    private Animator naveAnimator;
 
     // Start is called before the first frame update
     void Start()
     {
+        naveAnimator = GetComponent<Animator>();
         shipRigidbody = GetComponent<Rigidbody2D>();
         canShoot= true; 
         countDown= 0;
@@ -26,8 +27,11 @@ public class Nave : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
-        Shoot();
+        if (isIlive)
+        {
+            Move();
+            Shoot();
+        }    
     }
 
     void Move()
@@ -71,23 +75,10 @@ public class Nave : MonoBehaviour
         }
         //StartCoroutine("Fire");
     }
-    void Deadh()
-    {
 
+    public void Deadh()
+    {
+        isIlive = false;
+        naveAnimator.SetBool("explosion", true);
     }
-
- /*   IEnumerable Fire()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (canShoot)
-            {
-                canShoot = false;
-                Instantiate(shoot, shootPoint.position, shootPoint.rotation);
-                yield return new WaitForSeconds(0.3f);
-                canShoot = true;
-            }
-
-        }
-    }*/
 }
