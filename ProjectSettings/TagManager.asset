@@ -8,6 +8,7 @@ TagManager:
   - WallLeft
   - WallRight
   - Bonus
+  - Life
   layers:
   - Default
   - TransparentFX

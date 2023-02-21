@@ -177,6 +177,7 @@ public class Inimigo : MonoBehaviour
     public void Explosion()
     {
         isAlive = false;
+        fase.AddScore(scorePoint);
         GetComponent<BoxCollider2D>().enabled= false;
         enemyAnimator.SetBool("explosion", true);
         Invoke(nameof(Destroy), 0.5f);
@@ -185,7 +186,6 @@ public class Inimigo : MonoBehaviour
 
     void Destroy()
     {
-        fase.AddScore(scorePoint);
         Destroy(gameObject);
     }
 }

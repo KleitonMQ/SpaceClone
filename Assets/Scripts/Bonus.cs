@@ -6,7 +6,7 @@ public class Bonus : MonoBehaviour
 {
     Transform bonusTransform;
     Animator bonusAnimator;
-    
+    Fase fase;
     public float speed;
     public bool isAlive;
 
@@ -18,6 +18,9 @@ public class Bonus : MonoBehaviour
         bonusAnimator= GetComponent<Animator>();
         bonusTransform = GetComponent<Transform>();
         Destroy(gameObject, 6f);
+
+        //Outra forma pegar ponteiro da classe.
+        fase = FindObjectOfType(typeof(Fase)) as Fase;
     }
 
     // Update is called once per frame
@@ -36,6 +39,7 @@ public class Bonus : MonoBehaviour
     public void Explosion()
     {
         isAlive = false;
+        fase.AddScore(scorePoint);
         GetComponent<BoxCollider2D>().enabled = false;
         bonusAnimator.SetBool("explosion", true);
         Invoke(nameof(Destroy), 0.5f);

@@ -36,6 +36,7 @@ public class Fase : MonoBehaviour
         score = 0;
         faseNumber = 1;
         bonusFrequency = 15;
+        maxScore = PlayerPrefs.GetInt("score");
         SpawnEnemy();
         FrequencySpawnBonus();
 
@@ -177,6 +178,18 @@ public class Fase : MonoBehaviour
     void OnNaveDeath()
     {
         lives--;
+        if (lives == 0)
+        {
+            GameOver();
+        }
+    }
+    void GameOver()
+    {
+        if (score > maxScore)
+        {
+            PlayerPrefs.SetInt("score", score);
+        }
+
     }
 
     public void AddScore(int scorePoint)
@@ -187,4 +200,6 @@ public class Fase : MonoBehaviour
     {
         scoreText.text = "Score: " + score;
     }
+
+    
 }
