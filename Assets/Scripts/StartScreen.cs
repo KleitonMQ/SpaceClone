@@ -6,25 +6,42 @@ using UnityEngine.SceneManagement;
 
 public class StartScreen : MonoBehaviour
 {
+    private bool showInfo;
     private int maxScore;
+    
     public TextMeshProUGUI textScore;
+    public GameObject infoHud;
 
     // Start is called before the first frame update
     void Start()
     {
         maxScore = PlayerPrefs.GetInt("score");
-        
-            textScore.text = ("Max Score: " + maxScore);
-        
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        textScore.text = ("Max Score: " + maxScore);
+
+        if (Input.GetKeyDown(KeyCode.Return) && !showInfo)
         {
             SceneManager.LoadScene(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            showInfo = !showInfo; 
+            infoHud.SetActive(showInfo);
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            showInfo = false;
+            infoHud.SetActive(showInfo);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            PlayerPrefs.DeleteAll();
         }
     }
 }

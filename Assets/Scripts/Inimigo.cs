@@ -128,6 +128,13 @@ public class Inimigo : MonoBehaviour
 
             }
         }
+        if (collision.gameObject.tag =="Player")
+        {
+            var player = collision.gameObject.GetComponent<Nave>();
+            player.Death();
+            Explosion();
+
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
