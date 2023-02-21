@@ -14,6 +14,7 @@ public class Fase : MonoBehaviour
     public GameObject bonus;
     public GameObject bonusSpawn;
     public GameObject lifeSprite;
+    public GameObject pauseHud;
     public TextMeshProUGUI scoreText;
 
     public int quantityLines = 6;
@@ -29,7 +30,7 @@ public class Fase : MonoBehaviour
     private int score;
     private int maxScore;
     private int faseNumber;
-
+    private bool isPaused;
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +59,7 @@ public class Fase : MonoBehaviour
         EnemyCount();
         LifeController();
         ShowScore();
+        Pause();
     }
 
     public void SpawnEnemy()
@@ -156,7 +158,7 @@ public class Fase : MonoBehaviour
     public void LifeController()
     {
         float spaceHorizontal = 0.3f;
-        
+
         Vector2 currentPosition = initialPositionLife;
         GameObject[] lifes = GameObject.FindGameObjectsWithTag("Life");
 
@@ -174,7 +176,7 @@ public class Fase : MonoBehaviour
         if (lifes.Length > lives)
         {
             foreach (GameObject life in lifes)
-            Destroy(life);
+                Destroy(life);
         }
     }
     void OnNaveDeath()
@@ -182,7 +184,7 @@ public class Fase : MonoBehaviour
         lives--;
         if (lives == 0)
         {
-            Nave.gameOver= true;
+            Nave.gameOver = true;
             Invoke(nameof(GameOver), 3f);
         }
     }
@@ -202,5 +204,19 @@ public class Fase : MonoBehaviour
     void ShowScore()
     {
         scoreText.text = "Score: " + score;
+    }
+
+    void Pause()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            isPaused = !isPaused;
+            pauseHud.SetActive(isPaused);
+        }
+        //timScale é um controlador de processos da unity, setar ele como 0 faz os processos serem suspensos.
+        if (isPaused)
+            Time.timeScale= 0;
+        else
+            Time.timeScale = 1;
     }
 }
