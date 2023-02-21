@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Inimigo : MonoBehaviour
 {
+    static public bool GameRun;
+
     public bool enemyCanDown;
     private Animator enemyAnimator;
     public GameObject enemyShoot;
@@ -29,6 +31,7 @@ public class Inimigo : MonoBehaviour
         enemyAnimator = GetComponent<Animator>();
         enemyTransform = GetComponent<Transform>();
 
+        GameRun= true;
         enemyCanDown= true;
         enemySpeed = 1f;
         enemyMove = 0;
@@ -47,12 +50,14 @@ public class Inimigo : MonoBehaviour
     {
         if (isAlive)
         {
-            enemyMove += enemySpeed * Time.deltaTime;
-            UseSpriteFrame();
-            Shoot();
-            Move();
+            if (GameRun)
+            {
+                enemyMove += enemySpeed * Time.deltaTime;
+                UseSpriteFrame();
+                Shoot();
+                Move();
+            }
         }
-        
     }
 
     void Shoot()

@@ -15,6 +15,9 @@ public class Nave : MonoBehaviour
     private Rigidbody2D shipRigidbody;
     private Animator naveAnimator;
 
+    public delegate void DeathHandler();
+    public event DeathHandler OnDeath;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +35,11 @@ public class Nave : MonoBehaviour
         {
             Move();
             Shoot();
-        }    
+        }
+        else
+        {
+            shipRigidbody.velocity = new Vector2(0, 0);
+        }
     }
 
     void Move()
@@ -74,12 +81,22 @@ public class Nave : MonoBehaviour
                 canShoot= true;
             }
         }
-        //StartCoroutine("Fire");
     }
 
-    public void Deadh()
+    public void Death()
     {
+        naveAnimator.SetInteger("explosion", 1);
         isIlive = false;
-        naveAnimator.SetBool("explosion", true);
+        Invoke(nameof(AfterDeath),2f);
+        OnDeath?.Invoke();
+
+    }
+
+    void AfterDeath()
+    {
+        naveAnimator.SetInteger("explosion", 0);
+        transform.position = new Vector3(0f, -4.637913f);
+        isIlive = true;
+        Inimigo.GameRun = true;
     }
 }

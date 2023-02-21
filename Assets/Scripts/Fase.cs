@@ -8,12 +8,14 @@ public class Fase : MonoBehaviour
     public GameObject[] enemys;
     public GameObject bonus;
     public GameObject bonusSpawn;
+    public GameObject lifeSprite;
 
     public int quantityLines = 6;
     public int quantityColluns = 5;
 
 
     private Vector2 initialPosition = new Vector2(2.45f, 2.9f);
+    private Vector2 initialPositionLife = new Vector2(2.86f, 4.74f);
 
     private float countSpawnBonus;
     private int bonusFrequency;
@@ -32,6 +34,11 @@ public class Fase : MonoBehaviour
         SpawnEnemy();
         FrequencySpawnBonus();
 
+        Nave nave = FindObjectOfType<Nave>();
+
+
+        // Inscreve o método OnNaveDeath() no evento OnDeath da classe Nave
+        nave.OnDeath += OnNaveDeath;
     }
 
     // Update is called once per frame
@@ -41,6 +48,7 @@ public class Fase : MonoBehaviour
         SpawnBonus();
         DifficultUp();
         EnemyCount();
+        LifeController();
     }
 
     public void SpawnEnemy()
@@ -135,5 +143,23 @@ public class Fase : MonoBehaviour
             faseNumber++;
             SpawnEnemy();
         }
+    }
+    public void LifeController()
+    {
+        float spaceHorizontal = 0.3f;
+        
+        Vector2 currentPosition = initialPositionLife;
+
+        for (int i = 0; i < lives; i++)
+        {
+            
+                GameObject life = Instantiate(lifeSprite, currentPosition, Quaternion.identity);
+
+                currentPosition.x -= spaceHorizontal;
+        }
+    }
+    void OnNaveDeath()
+    {
+        lives--;
     }
 }
