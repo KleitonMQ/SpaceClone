@@ -27,7 +27,7 @@ public class StartScreen : MonoBehaviour
     {
         textScore.text = ("Max Score: " + maxScore);
 
-        if (Input.GetKeyDown(KeyCode.Return) && !showInfo)
+        if ((Input.GetKeyDown(KeyCode.Return)|| Input.GetKeyDown(KeyCode.KeypadEnter)) && !showInfo)
         {
             showInfo= !showInfo;
             startSound.Play();
